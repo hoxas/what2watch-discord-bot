@@ -1,6 +1,8 @@
 import discord
 from discord.ext import commands
 
+TOKEN = open('token.txt', 'r').read().split('\n')[0].split()[0]
+
 client = commands.Bot(command_prefix='$', help_command=None)
 
 
@@ -52,4 +54,4 @@ async def on_message(message):
         await message.channel.send("dawda")
 """
 
-client.run('TOKEN_HERE')
+client.run(TOKEN)
