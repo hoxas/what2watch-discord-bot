@@ -42,6 +42,9 @@ def cache(func):
 class ImdbCrawler:
     def __init__(self, imdb_url, seasons_filter='', ignore_cache=False):
         self.imdb_url = imdb_url
+        if 'm.imdb.com/' in self.imdb_url:
+            self.imdb_url = self.imdb_url.replace('m.imdb.com/', 'www.imdb.com/')
+
         self.seasons_filter = seasons_filter
         self.ignore_cache = ignore_cache
         self.cache = CACHE
@@ -53,21 +56,21 @@ class ImdbCrawler:
         self.winner = dict()
 
     @property
-    def title(self):
+    def title(self) -> str:
         if self.season_soup:
             return self.season_soup.find('title').text
         else:
             return self.soup.find('title').text
 
-    def get_winner(self):
+    def get_winner(self) -> dict:
         """
         Parse url and get the winner
         """
         winner = self.winner
         imdb_url = self.imdb_url
 
-        if 'www.imdb.com/title/' in imdb_url:
-            imdb_url = imdb_url.split('?')[0]
+        if 'imdb.com/title/' in imdb_url:
+            self.imdb_url = imdb_url.split('?')[0]
             if imdb_url[-1] != '/':
                 imdb_url += '/'
             seasons, seasons_selected = self.get_seasons()
@@ -78,7 +81,7 @@ class ImdbCrawler:
             winner['SEASON'] = seasons_selected[winner['SEASON']]
             winner['EPISODE'] += 1
         else:
-            if 'www.imdb.com/chart/' in imdb_url:
+            if 'imdb.com/chart/' in imdb_url:
                 movie_list = self.get_chart()
             else:
                 movie_list = self.get_watchlist()
@@ -94,7 +97,7 @@ class ImdbCrawler:
         winner_titleblock = winner_soup.find(
             'div', {'class': re.compile('sc.+cMYixt')})
         winner['length'] = winner_titleblock.find_all(
-            'li', {'class': 'ipc-inline-list__item'})[2].text
+            'li', {'class': 'ipc-inline-list__item'})[1].text
         winner['image'] = winner_soup.find(
             'img', {'class': 'ipc-image'})['src']
         winner['plot'] = winner_soup.find(
