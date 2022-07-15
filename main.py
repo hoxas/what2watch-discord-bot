@@ -1,5 +1,6 @@
 import discord
 from discord.ext import commands
+from crawler import ImdbCrawler
 
 TOKEN = open('token.txt', 'r').read().split('\n')[0].split()[0]
 
@@ -40,6 +41,10 @@ $<https://www.imdb.com/title/tt1234567/> 1,5-10 -> Retorna os episódios da temp
     embed=discord.Embed(title="Comandos",url="https://pastebin.com/U5Emcgfr", description=description,colour=discord.Color.green())
     await ctx.send(embed=embed)
 
+@client.command(aliases=['url'])
+async def URL(ctx, *, url):
+    crawler = ImdbCrawler(url)
+    await ctx.send(crawler.get_winner())
 
 """
 @client.event
