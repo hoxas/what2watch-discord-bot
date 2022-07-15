@@ -44,7 +44,24 @@ $<https://www.imdb.com/title/tt1234567/> 1,5-10 -> Retorna os episódios da temp
 @client.command(aliases=['url'])
 async def URL(ctx, *, url):
     crawler = ImdbCrawler(url)
-    await ctx.send(crawler.get_winner())
+    lista = crawler.get_winner()
+    desc=f'''
+**Título**: {lista['title']}
+**Gênero**: {lista['genre']}
+**Duração**: {lista['length']}
+
+**Plot**:
+{lista['plot']}
+
+**Cast**: {lista['cast']}
+
+**Score**: {lista['score']}
+
+**Créditos**: {lista['credits']}
+'''
+    emb=discord.Embed(title=lista['title'],url=lista['link'],description=desc,colour=discord.Color.green())
+    emb.set_thumbnail(url=lista['image'])
+    await ctx.send(embed=emb)
 
 """
 @client.event
